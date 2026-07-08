@@ -600,3 +600,40 @@ document.addEventListener("visibilitychange", () => {
         }
     }
 });
+
+// ========== Отслеживание кликов по кнопкам в Яндекс Метрике ==========
+
+const METRIKA_ID = 110509647;
+
+function sendMetrikaEvent(target, label = '') {
+    if (typeof ym !== 'undefined') {
+        try {
+            ym(METRIKA_ID, 'reachGoal', target, { label });
+            console.log(`[Metrika] ✅ Событие: ${target} (${label})`);
+        } catch (e) {
+            console.warn('[Metrika] ❌ Ошибка:', e);
+        }
+    }
+}
+
+// Отслеживаем все кнопки с классом js-referral-link
+document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.js-referral-link');
+
+    buttons.forEach((button, index) => {
+        button.addEventListener('click', function() {
+            // Определяем, какая это кнопка по ее положению на странице
+            let buttonPosition = 'unknown';
+
+            if (this.closest('.topbar')) {
+                buttonPosition = 'topbar';
+            } else if (this.closest('.hero')) {
+                buttonPosition = 'hero';
+            } else if (this.closest('.final-cta')) {
+                buttonPosition = 'final_cta';
+            }
+
+            sendMetrikaEvent('referral_click', buttonPosition);
+        });
+    });
+});
