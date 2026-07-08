@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Курьер в Яндекс Доставку</title>
+    <meta
+            name="description"
+            content="Короткая промо-страница для перехода к анкете курьера Яндекс Доставки."
+    />
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=110509647', 'ym');
+
+        ym(110509647, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/110509647" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+
+
+</head>
+<body>
+<main class="landing">
+    <section class="hero" aria-label="Работа курьером в Яндекс Доставку">
+        <!-- Canvas для карты -->
+        <canvas id="routeCanvas" aria-hidden="true"></canvas>
+
+        <header class="topbar">
+            <a class="brand" href="#">
+                <span class="brand-mark">Я</span>
+                <span>Яндекс Доставка</span>
+            </a>
+            <a class="top-link js-referral-link" href="https://example.com/referral" rel="noreferrer">
+                Заполнить анкету
+            </a>
+        </header>
+
+        <div class="hero-grid">
+            <div class="hero-copy">
+                <!-- Блок с жидким стеклом -->
+                <div class="glass-card">
+                    <p class="eyebrow">Подработка курьером</p>
+                    <h1>Зарабатывайте на доставках в удобное время</h1>
+                    <p class="hero-text">
+                        Выбирайте район, берите заказы и отслеживайте начисления прямо в приложении. Заполнение анкеты – 2 минуты.
+                    </p>
+                </div>
+
+                <div class="live-panel" aria-label="Динамика начислений">
+                    <div>
+                        <span>Начислено всего</span>
+                        <strong><span id="earnedCounter">0</span> <span class="rub">₽</span></strong>
+                    </div>
+                    <div>
+                        <span>Выполнено заказов</span>
+                        <strong><span id="orderCounter">0</span></strong>
+                    </div>
+                    <div>
+                        <span>Средний заказ</span>
+                        <strong><span id="averageCounter">0</span> <span class="rub">₽</span></strong>
+                    </div>
+                </div>
+
+                <a class="cta js-referral-link" href="https://example.com/referral" rel="noreferrer">
+                    Заполнить анкету
+                </a>
+            </div>
+
+            <div class="phone-wrap" aria-label="Пример экрана приложения">
+                <div class="phone">
+                    <div class="phone-speaker"></div>
+                    <div class="app-head">
+                        <span>Активная смена</span>
+                        <strong id="shiftTimer">02:28</strong>
+                    </div>
+                    <div class="balance-card">
+                        <span>Баланс</span>
+                        <strong><span id="phoneEarned">0</span> <span class="rub">₽</span></strong>
+                        <div class="progress">
+                            <span id="progressLine"></span>
+                        </div>
+                    </div>
+                    <div class="order-card current">
+                        <span class="dot"></span>
+                        <div>
+                            <b>Кафе · заказ #<span id="orderNumber">1855</span></b>
+                            <p>Начисление +<span id="lastOrder">320</span> ₽</p>
+                        </div>
+                    </div>
+                    <div class="order-list" id="orderList" aria-label="Последние начисления"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="benefits" aria-label="Коротко о преимуществах">
+        <article>
+            <span>01</span>
+            <h2>Гибкий график</h2>
+            <p>Можно выходить на несколько часов, вечером или в выходные.</p>
+        </article>
+        <article>
+            <span>02</span>
+            <h2>Доход видно сразу</h2>
+            <p>Начисления за заказы отображаются в приложении по ходу смены.</p>
+        </article>
+        <article>
+            <span>03</span>
+            <h2>Разные форматы</h2>
+            <p>Пешком, на велосипеде, самокате или автомобиле.</p>
+        </article>
+    </section>
+
+    <section class="final-cta" aria-label="Переход к анкете">
+        <p>Готовы попробовать?</p>
+        <a class="cta js-referral-link" href="https://example.com/referral" rel="noreferrer">Заполнить анкету</a>
+    </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
