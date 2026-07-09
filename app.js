@@ -19,7 +19,7 @@ let width = 0;
 let height = 0;
 let dpr = 1;
 let frame = 0;
-let earned = 6040;
+let earned = 3254;
 let orders = 8;
 let currentOrder = 1855;
 let shiftMinutes = 148;
@@ -568,7 +568,7 @@ setTimeout(() => {
 }, 100);
 
 // Таймеры
-setInterval(tickOrders, 2000);
+setInterval(tickOrders, 1200);
 setInterval(updateTimer, 3200);
 setInterval(toggleDot, 800);
 
