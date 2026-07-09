@@ -178,7 +178,6 @@ p {
     margin-bottom: 8px;
 }
 
-/* Эффект свечения для жидкого стекла */
 .glass-card::before {
     content: '';
     position: absolute;
@@ -199,7 +198,6 @@ p {
     pointer-events: none;
 }
 
-/* Блик на стекле */
 .glass-card::after {
     content: '';
     position: absolute;
@@ -222,7 +220,7 @@ p {
 
 .glass-card h1 {
     max-width: 690px;
-    font-size: clamp(42px, 6.6vw, 78px);
+    font-size: clamp(32px, 6.6vw, 78px);
     line-height: 0.92;
     letter-spacing: 0;
     color: var(--black);
@@ -233,7 +231,7 @@ p {
     max-width: 580px;
     margin-top: 18px;
     color: #36473d;
-    font-size: clamp(18px, 2.2vw, 22px);
+    font-size: clamp(16px, 2.2vw, 22px);
     line-height: 1.45;
     text-shadow: 0 1px 2px rgba(255, 255, 255, 0.1);
 }
@@ -255,7 +253,7 @@ p {
 
 h1 {
     max-width: 690px;
-    font-size: clamp(42px, 6.6vw, 78px);
+    font-size: clamp(32px, 6.6vw, 78px);
     line-height: 0.92;
     letter-spacing: 0;
 }
@@ -264,7 +262,7 @@ h1 {
     max-width: 580px;
     margin-top: 22px;
     color: #36473d;
-    font-size: clamp(18px, 2.2vw, 22px);
+    font-size: clamp(16px, 2.2vw, 22px);
     line-height: 1.45;
 }
 
@@ -307,7 +305,7 @@ h1 {
     position: relative;
     z-index: 1;
     color: var(--muted);
-    font-size: 22px;
+    font-size: clamp(16px, 2vw, 22px);
     font-weight: 850;
 }
 
@@ -317,7 +315,7 @@ h1 {
     display: block;
     margin-top: 8px;
     color: var(--black);
-    font-size: clamp(34px, 4.6vw, 52px);
+    font-size: clamp(28px, 4.6vw, 52px);
     line-height: 1;
 }
 
@@ -336,7 +334,7 @@ h1 {
     border-radius: 8px;
     background: var(--lime);
     color: var(--black);
-    font-size: 18px;
+    font-size: clamp(16px, 1.5vw, 18px);
     font-weight: 950;
     line-height: 1.1;
     text-align: center;
@@ -367,24 +365,25 @@ h1 {
     perspective: 900px;
     position: relative;
     z-index: 2;
+    width: 100%;
 }
 
 .phone {
     position: relative;
-    width: min(100%, 288px);
-    height: 536px;
-
+    width: 100%;
+    max-width: 288px;
+    aspect-ratio: 288 / 536;
     overflow: hidden;
-    padding: 20px 14px 14px;
-    border: 6px solid var(--black);
-    border-radius: 30px;
+    padding: clamp(14px, 2.5vw, 20px) clamp(10px, 1.8vw, 14px) clamp(10px, 1.8vw, 14px);
+    border: clamp(4px, 0.8vw, 6px) solid var(--black);
+    border-radius: clamp(20px, 4vw, 30px);
     background:
             linear-gradient(180deg, #ffffff 0%, #effff1 100%);
     background-clip: padding-box;
     box-shadow:
             0 20px 50px rgba(7, 18, 13, 0.16),
-            14px 14px 0 var(--black),
-            20px 20px 0 var(--lime),
+            clamp(10px, 1.8vw, 14px) clamp(10px, 1.8vw, 14px) 0 var(--black),
+            clamp(14px, 2.5vw, 20px) clamp(14px, 2.5vw, 20px) 0 var(--lime),
             inset 0 0 0 1px rgba(255, 255, 255, 0.86);
     transform: rotate(2deg) translateZ(0);
     backface-visibility: hidden;
@@ -404,11 +403,12 @@ h1 {
 }
 
 .phone-speaker {
-    width: 72px;
-    height: 6px;
-    margin: 0 auto 18px;
+    width: clamp(50px, 10vw, 72px);
+    height: clamp(5px, 0.8vw, 6px);
+    margin: 0 auto clamp(12px, 2.5vw, 18px);
     border-radius: 999px;
     background: var(--black);
+    flex-shrink: 0;
 }
 
 .app-head {
@@ -416,43 +416,45 @@ h1 {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
+    flex-shrink: 0;
 }
 
 .app-head span {
-    font-size: 14px;
+    font-size: clamp(12px, 1.8vw, 14px);
 }
 
 .app-head strong {
-    padding: 6px 8px;
+    padding: clamp(4px, 0.6vw, 6px) clamp(6px, 1vw, 8px);
     border-radius: 6px;
     background: var(--black);
     color: var(--lime);
-    font-size: 13px;
+    font-size: clamp(11px, 1.6vw, 13px);
 }
 
 .balance-card {
-    margin-top: 14px;
-    padding: 14px 16px;
+    margin-top: clamp(10px, 1.8vw, 14px);
+    padding: clamp(10px, 1.8vw, 14px) clamp(12px, 2vw, 16px);
     border-radius: 6px;
     background: var(--lime);
     border: 2px solid var(--black);
     box-shadow: 4px 4px 0 rgba(7, 18, 13, 0.95);
+    flex-shrink: 0;
 }
 
 .balance-card span {
-    font-size: 14px;
+    font-size: clamp(12px, 1.6vw, 14px);
 }
 
 .balance-card strong {
     display: block;
-    margin-top: 6px;
-    font-size: 36px;
+    margin-top: clamp(4px, 0.6vw, 6px);
+    font-size: clamp(28px, 4.5vw, 36px);
     line-height: 1;
 }
 
 .progress {
-    height: 8px;
-    margin-top: 12px;
+    height: clamp(6px, 0.8vw, 8px);
+    margin-top: clamp(8px, 1.2vw, 12px);
     overflow: hidden;
     border-radius: 999px;
     background: rgba(7, 18, 13, 0.16);
@@ -470,12 +472,13 @@ h1 {
 .order-card {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-    padding: 10px 12px;
+    gap: clamp(6px, 1vw, 10px);
+    margin-top: clamp(6px, 1vw, 10px);
+    padding: clamp(6px, 1vw, 10px) clamp(8px, 1.4vw, 12px);
     border: 2px solid var(--black);
     border-radius: 6px;
     background: #fff;
+    flex-shrink: 0;
 }
 
 .current {
@@ -484,38 +487,41 @@ h1 {
 }
 
 .dot {
-    width: 10px;
-    height: 10px;
+    width: clamp(8px, 1.2vw, 10px);
+    height: clamp(8px, 1.2vw, 10px);
     border-radius: 50%;
     background: var(--mint);
-    box-shadow: 0 0 0 6px rgba(6, 214, 123, 0.16);
+    box-shadow: 0 0 0 clamp(4px, 0.6vw, 6px) rgba(6, 214, 123, 0.16);
     transition: opacity 0.3s ease;
     flex-shrink: 0;
 }
 
 .order-card b {
     display: block;
-    font-size: 13px;
+    font-size: clamp(11px, 1.6vw, 13px);
 }
 
 .order-card p {
     margin-top: 2px;
     color: var(--muted);
-    font-size: 11px;
+    font-size: clamp(10px, 1.2vw, 11px);
     font-weight: 750;
 }
 
 .order-list {
-    margin-top: 10px;
+    margin-top: clamp(6px, 1vw, 10px);
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
 }
 
 .order-list div {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: clamp(6px, 1vw, 10px);
     justify-content: space-between;
-    margin-top: 6px;
-    padding: 8px 12px;
+    margin-top: clamp(4px, 0.6vw, 6px);
+    padding: clamp(4px, 0.6vw, 8px) clamp(8px, 1.2vw, 12px);
     border: 2px solid var(--black);
     border-radius: 6px;
     background: #fff;
@@ -524,19 +530,19 @@ h1 {
 
 .order-list b {
     display: block;
-    font-size: 12px;
+    font-size: clamp(10px, 1.4vw, 12px);
 }
 
 .order-list p {
     margin-top: 2px;
     color: var(--muted);
-    font-size: 11px;
+    font-size: clamp(9px, 1.2vw, 11px);
     font-weight: 750;
 }
 
 .order-list strong {
     color: #009d5c;
-    font-size: 12px;
+    font-size: clamp(10px, 1.4vw, 12px);
 }
 
 .benefits {
@@ -613,6 +619,17 @@ h1 {
     }
 }
 
+/* ========== АДАПТИВНОСТЬ ========== */
+
+/* Планшеты и маленькие ноутбуки */
+@media (max-width: 1024px) {
+    .hero-grid {
+        gap: 40px;
+        padding: 40px 0 50px;
+    }
+}
+
+/* Мобильные устройства (ширина до 900px) */
 @media (max-width: 900px) {
     .hero {
         min-height: auto;
@@ -622,43 +639,62 @@ h1 {
         grid-template-columns: 1fr;
         gap: 34px;
         min-height: auto;
-        padding: 56px 0 52px;
+        padding: 40px 0 40px;
     }
 
     .glass-card {
         padding: 24px 20px 28px;
     }
 
+    .glass-card h1 {
+        font-size: clamp(38px, 8vw, 52px);
+    }
+
     .live-panel {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
     }
 
     .live-panel div {
-        min-height: 92px;
+        min-height: 80px;
+        padding: 12px 14px;
     }
 
     .phone {
-        width: min(100%, 260px);
-        min-height: 480px;
-        transform: none;
+        max-width: 260px;
+        transform: rotate(1deg);
     }
 
     .benefits {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
         padding-top: 28px;
+        gap: 10px;
+    }
+
+    .benefits article {
+        min-height: 160px;
+        padding: 20px;
     }
 }
 
+/* Маленькие телефоны (ширина до 560px) */
 @media (max-width: 560px) {
     .topbar,
     .hero-grid,
     .benefits,
     .final-cta {
-        width: min(100% - 24px, 1120px);
+        width: min(100% - 20px, 1120px);
     }
 
     .topbar {
-        align-items: stretch;
+        padding-top: 14px;
+        gap: 10px;
+        flex-direction: row; /* Сохраняем горизонтальное расположение */
+        flex-wrap: nowrap; /* Запрещаем перенос */
+    }
+
+    .brand {
+        flex-shrink: 0; /* Логотип не сжимается */
     }
 
     .brand span:last-child {
@@ -667,50 +703,569 @@ h1 {
         line-height: 1.05;
     }
 
+    .brand-mark {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
     .top-link {
-        min-width: 138px;
-        padding-inline: 10px;
-        font-size: 13px;
+        min-width: auto;
+        padding-inline: 12px;
+        font-size: 12px;
+        min-height: 36px;
+        flex-shrink: 0; /* Кнопка не сжимается */
+        margin-left: auto; /* Прижимаем к правому краю */
     }
 
     .hero-grid {
-        padding-top: 40px;
+        padding-top: 30px;
+        gap: 28px;
     }
 
     .glass-card {
-        padding: 20px 16px 24px;
+        padding: 18px 16px 22px;
         border-radius: 16px;
     }
 
     .glass-card h1 {
-        font-size: clamp(39px, 13vw, 58px);
+        font-size: clamp(32px, 10vw, 42px);
+        line-height: 0.95;
     }
 
     .glass-card .hero-text {
-        font-size: 17px;
+        font-size: 16px;
+        margin-top: 14px;
+    }
+
+    .glass-card .eyebrow {
+        font-size: 11px;
+        padding: 6px 10px;
+        margin-bottom: 10px;
+    }
+
+    .live-panel {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-top: 20px;
+    }
+
+    .live-panel div {
+        min-height: 70px;
+        padding: 10px 12px;
+    }
+
+    .live-panel span {
+        font-size: 13px;
+    }
+
+    .live-panel strong {
+        font-size: clamp(22px, 6vw, 30px);
+        margin-top: 4px;
+    }
+
+    .live-panel strong .rub {
+        font-size: 0.5em;
     }
 
     .cta {
-        width: 100%;
-    }
-
-    .live-panel strong .rub, .balance-card strong .rub {
-        font-size: 0.6em;
+        min-height: 48px;
+        padding: 14px 20px;
+        font-size: 15px;
+        margin-top: 20px;
+        box-shadow: 6px 6px 0 rgba(7, 18, 13, 0.95);
     }
 
     .phone {
-        width: min(100%, 260px);
-        max-height: 420px;
-        border-width: 5px;
-        border-radius: 24px;
-        padding: 16px 12px 12px;
-        transform: rotate(4deg);
+        max-width: 220px;
+        border-width: 4px;
+        border-radius: 20px;
+        padding: 14px 10px 10px;
         box-shadow:
                 0 16px 36px rgba(7, 18, 13, 0.16),
                 8px 8px 0 var(--black),
                 12px 12px 0 var(--lime),
                 inset 0 0 0 1px rgba(255, 255, 255, 0.86);
+        transform: rotate(3deg);
     }
 
+    .phone-speaker {
+        width: 48px;
+        height: 4px;
+        margin-bottom: 12px;
+    }
 
+    .app-head span {
+        font-size: 11px;
+    }
+
+    .app-head strong {
+        font-size: 10px;
+        padding: 4px 6px;
+    }
+
+    .balance-card {
+        margin-top: 10px;
+        padding: 10px 12px;
+    }
+
+    .balance-card span {
+        font-size: 11px;
+    }
+
+    .balance-card strong {
+        font-size: 24px;
+        margin-top: 3px;
+    }
+
+    .balance-card strong .rub {
+        font-size: 0.5em;
+    }
+
+    .progress {
+        height: 5px;
+        margin-top: 8px;
+    }
+
+    .order-card {
+        margin-top: 8px;
+        padding: 6px 10px;
+        gap: 6px;
+    }
+
+    .order-card b {
+        font-size: 11px;
+    }
+
+    .order-card p {
+        font-size: 9px;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        box-shadow: 0 0 0 4px rgba(6, 214, 123, 0.16);
+    }
+
+    .order-list {
+        margin-top: 6px;
+    }
+
+    .order-list div {
+        padding: 4px 8px;
+        margin-top: 4px;
+        gap: 6px;
+    }
+
+    .order-list b {
+        font-size: 10px;
+    }
+
+    .order-list p {
+        font-size: 9px;
+    }
+
+    .order-list strong {
+        font-size: 10px;
+    }
+
+    .benefits {
+        grid-template-columns: 1fr;
+        padding-top: 20px;
+        gap: 8px;
+    }
+
+    .benefits article {
+        min-height: 120px;
+        padding: 16px;
+    }
+
+    .benefits span {
+        font-size: 12px;
+        padding: 4px 8px;
+        margin-bottom: 12px;
+    }
+
+    .benefits h2 {
+        font-size: 18px;
+    }
+
+    .benefits p {
+        font-size: 13px;
+        margin-top: 6px;
+    }
+
+    .final-cta {
+        padding: 30px 0 40px;
+    }
+
+    .final-cta p {
+        font-size: clamp(24px, 6vw, 32px);
+    }
+
+    .final-cta .cta {
+        min-height: 48px;
+        font-size: 15px;
+        padding: 14px 20px;
+    }
+}
+
+/* Очень маленькие телефоны (340px - 400px) */
+@media (max-width: 400px) {
+    .topbar {
+        flex-direction: row; /* Сохраняем горизонтальное расположение */
+        flex-wrap: nowrap;
+        gap: 6px;
+        padding-top: 10px;
+    }
+
+    .brand {
+        flex-shrink: 0;
+    }
+
+    .brand span:last-child {
+        font-size: 12px;
+        max-width: 80px;
+    }
+
+    .brand-mark {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+    }
+
+    .top-link {
+        font-size: 11px;
+        padding-inline: 10px;
+        min-height: 32px;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    .glass-card h1 {
+        font-size: clamp(28px, 8vw, 34px);
+    }
+
+    .glass-card .hero-text {
+        font-size: 14px;
+    }
+
+    .live-panel {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+
+    .live-panel div {
+        min-height: 60px;
+        padding: 8px 12px;
+    }
+
+    .live-panel strong {
+        font-size: clamp(20px, 5vw, 26px);
+    }
+
+    .phone {
+        max-width: 190px;
+        border-width: 3px;
+        border-radius: 16px;
+        padding: 10px 8px 8px;
+        box-shadow:
+                0 12px 28px rgba(7, 18, 13, 0.16),
+                6px 6px 0 var(--black),
+                8px 8px 0 var(--lime),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.86);
+    }
+
+    .balance-card strong {
+        font-size: 20px;
+    }
+
+    .cta {
+        font-size: 14px;
+        min-height: 42px;
+        padding: 12px 16px;
+        box-shadow: 4px 4px 0 rgba(7, 18, 13, 0.95);
+    }
+
+    .benefits article {
+        min-height: 100px;
+        padding: 14px;
+    }
+
+    .benefits h2 {
+        font-size: 16px;
+    }
+
+    .benefits p {
+        font-size: 12px;
+    }
+
+    .final-cta p {
+        font-size: clamp(20px, 5vw, 28px);
+    }
+}
+
+/* Минимальные экраны (340px и меньше) */
+@media (max-width: 360px) {
+    .topbar {
+        gap: 4px;
+        padding-top: 8px;
+    }
+
+    .brand span:last-child {
+        font-size: 11px;
+        max-width: 60px;
+    }
+
+    .brand-mark {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+        border-width: 1.5px;
+    }
+
+    .top-link {
+        font-size: 10px;
+        padding-inline: 8px;
+        min-height: 28px;
+        border-width: 1.5px;
+    }
+
+    .glass-card {
+        padding: 12px 10px 16px;
+    }
+
+    .glass-card h1 {
+        font-size: 24px;
+    }
+
+    .glass-card .hero-text {
+        font-size: 13px;
+        margin-top: 10px;
+    }
+
+    .glass-card .eyebrow {
+        font-size: 10px;
+        padding: 4px 8px;
+    }
+
+    .phone {
+        max-width: 160px;
+        border-width: 3px;
+        border-radius: 14px;
+        padding: 8px 6px 6px;
+        box-shadow:
+                0 10px 24px rgba(7, 18, 13, 0.16),
+                4px 4px 0 var(--black),
+                6px 6px 0 var(--lime),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.86);
+    }
+
+    .phone-speaker {
+        width: 36px;
+        height: 3px;
+        margin-bottom: 8px;
+    }
+
+    .app-head span {
+        font-size: 9px;
+    }
+
+    .app-head strong {
+        font-size: 8px;
+        padding: 3px 5px;
+    }
+
+    .balance-card {
+        margin-top: 6px;
+        padding: 6px 8px;
+    }
+
+    .balance-card span {
+        font-size: 9px;
+    }
+
+    .balance-card strong {
+        font-size: 16px;
+        margin-top: 2px;
+    }
+
+    .progress {
+        height: 4px;
+        margin-top: 6px;
+    }
+
+    .order-card {
+        margin-top: 6px;
+        padding: 4px 6px;
+        gap: 4px;
+    }
+
+    .order-card b {
+        font-size: 9px;
+    }
+
+    .order-card p {
+        font-size: 8px;
+    }
+
+    .dot {
+        width: 6px;
+        height: 6px;
+        box-shadow: 0 0 0 3px rgba(6, 214, 123, 0.16);
+    }
+
+    .order-list {
+        margin-top: 4px;
+    }
+
+    .order-list div {
+        padding: 3px 6px;
+        margin-top: 3px;
+        gap: 4px;
+    }
+
+    .order-list b {
+        font-size: 8px;
+    }
+
+    .order-list p {
+        font-size: 7px;
+    }
+
+    .order-list strong {
+        font-size: 8px;
+    }
+
+    .cta {
+        font-size: 12px;
+        min-height: 36px;
+        padding: 10px 14px;
+        margin-top: 14px;
+        box-shadow: 4px 4px 0 rgba(7, 18, 13, 0.95);
+    }
+
+    .live-panel div {
+        min-height: 50px;
+        padding: 6px 10px;
+    }
+
+    .live-panel span {
+        font-size: 11px;
+    }
+
+    .live-panel strong {
+        font-size: clamp(16px, 4vw, 22px);
+        margin-top: 2px;
+    }
+
+    .benefits article {
+        min-height: 80px;
+        padding: 12px;
+    }
+
+    .benefits span {
+        font-size: 10px;
+        padding: 3px 6px;
+        margin-bottom: 8px;
+    }
+
+    .benefits h2 {
+        font-size: 14px;
+    }
+
+    .benefits p {
+        font-size: 11px;
+        margin-top: 4px;
+    }
+}
+
+/* Вертикальная ориентация для очень маленьких экранов */
+@media (max-width: 360px) and (orientation: portrait) {
+    .hero-grid {
+        padding-top: 16px;
+        gap: 16px;
+    }
+
+    .glass-card {
+        padding: 10px 8px 14px;
+    }
+
+    .glass-card h1 {
+        font-size: 22px;
+    }
+
+    .phone {
+        max-width: 150px;
+    }
+
+    .balance-card strong {
+        font-size: 14px;
+    }
+
+    .order-card b {
+        font-size: 8px;
+    }
+}
+
+/* Горизонтальная ориентация на телефонах */
+@media (max-height: 600px) and (orientation: landscape) {
+    .hero {
+        min-height: auto;
+        padding: 20px 0;
+    }
+
+    .hero-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        min-height: auto;
+        padding: 20px 0;
+    }
+
+    .glass-card {
+        padding: 16px 18px 20px;
+    }
+
+    .glass-card h1 {
+        font-size: clamp(28px, 4vw, 38px);
+    }
+
+    .glass-card .hero-text {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+
+    .live-panel {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        margin-top: 14px;
+    }
+
+    .live-panel div {
+        min-height: 60px;
+        padding: 8px 10px;
+    }
+
+    .phone {
+        max-width: 200px;
+        max-height: 380px;
+    }
+
+    .cta {
+        min-height: 40px;
+        padding: 10px 16px;
+        font-size: 14px;
+        margin-top: 14px;
+    }
+
+    .benefits {
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 20px 0;
+        gap: 8px;
+    }
+
+    .benefits article {
+        min-height: 120px;
+        padding: 14px;
+    }
 }
