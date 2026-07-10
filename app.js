@@ -631,9 +631,597 @@ document.addEventListener('DOMContentLoaded', function() {
                 buttonPosition = 'hero';
             } else if (this.closest('.final-cta')) {
                 buttonPosition = 'final_cta';
+            } else if (this.closest('.quiz-modal')) {
+                // Для модалки пропускаем, так как событие уже отправлено в showResult()
+                return;
             }
 
             sendMetrikaEvent('referral_click', buttonPosition);
         });
     });
 });
+
+// ========== МОДАЛЬНОЕ ОКНО С КВИЗОМ ==========
+
+const quizModalOverlay = document.getElementById('quizModalOverlay');
+const quizModalClose = document.getElementById('quizModalClose');
+let quizModalShown = false;
+let quizModalTriggered = false;
+
+// Функция открытия модалки
+function openQuizModal() {
+    if (quizModalShown) return;
+    quizModalShown = true;
+    quizModalTriggered = true;
+    quizModalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden'; // запрещаем скролл страницы
+}
+
+// Функция закрытия модалки
+function closeQuizModal() {
+    quizModalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Закрытие по кнопке ✕
+quizModalClose.addEventListener('click', closeQuizModal);
+
+// Закрытие по клику на оверлей (фон)
+quizModalOverlay.addEventListener('click', function(e) {
+    if (e.target === quizModalOverlay) {
+        closeQuizModal();
+    }
+});
+
+// Закрытие по Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && quizModalOverlay.classList.contains('active')) {
+        closeQuizModal();
+    }
+});
+
+// ===== 1. ПОКАЗ ЧЕРЕЗ 6 СЕКУНД =====
+setTimeout(function() {
+    if (!quizModalTriggered) {
+        openQuizModal();
+    }
+}, 6000);
+
+// ===== 2. ПОКАЗ ПРИ ДОЛИСТЫВАНИИ ДО НИЗА =====
+let scrollTriggered = false;
+
+function checkScrollForQuiz() {
+    if (quizModalShown || scrollTriggered) return;
+
+    const scrollY = window.scrollY || window.pageYOffset;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    // Если доскроллили до низа (с погрешностью 50px)
+    if (scrollY + windowHeight >= documentHeight - 50) {
+        scrollTriggered = true;
+        openQuizModal();
+    }
+}
+
+// Слушаем скролл с троттлингом для производительности
+let scrollTimeout;
+window.addEventListener('scroll', function() {
+    if (scrollTimeout) return;
+    scrollTimeout = setTimeout(function() {
+        checkScrollForQuiz();
+        scrollTimeout = null;
+    }, 200);
+});
+
+// Также проверяем при загрузке (вдруг страница уже проскроллена)
+window.addEventListener('load', function() {
+    setTimeout(checkScrollForQuiz, 500);
+});
+
+// ===== ИНИЦИАЛИЗАЦИЯ КВИЗА ВНУТРИ МОДАЛКИ =====
+(function initQuizInModal() {
+    const container = document.getElementById('quizContainer');
+    if (!container) return;
+
+    // Элементы
+    const stepEl = document.getElementById('quizStep');
+    const titleEl = document.getElementById('quizTitle');
+    const subEl = document.getElementById('quizSub');
+    const questions = document.querySelectorAll('.quiz-question');
+    const nextBtn = document.getElementById('quizNextBtn');
+    const resultBlock = document.getElementById('quizResult');
+    const queueNumber = document.getElementById('queueNumber');
+    const ageError = document.getElementById('ageError');
+
+    // Элементы для ввода города
+    const cityOptions = document.getElementById('cityOptions');
+    let cityInput = null;
+
+    // Состояние
+    let currentQuestion = 1;
+    const answers = {
+        city: null,
+        cityCustom: null,
+        cityNormalized: null,
+        age: null,
+        delivery: null
+    };
+
+    // ===== СПИСОК ГОРОДОВ РОССИИ (основные) =====
+    const CITIES_RU = [
+        'Москва', 'Санкт-Петербург', 'Новосибирск', 'Екатеринбург', 'Казань',
+        'Нижний Новгород', 'Челябинск', 'Самара', 'Омск', 'Ростов-на-Дону',
+        'Уфа', 'Красноярск', 'Пермь', 'Воронеж', 'Волгоград',
+        'Краснодар', 'Саратов', 'Тюмень', 'Тольятти', 'Ижевск',
+        'Барнаул', 'Ульяновск', 'Иркутск', 'Хабаровск', 'Ярославль',
+        'Владивосток', 'Махачкала', 'Томск', 'Оренбург', 'Кемерово',
+        'Новокузнецк', 'Рязань', 'Астрахань', 'Набережные Челны', 'Пенза',
+        'Липецк', 'Киров', 'Чебоксары', 'Калининград', 'Балашиха',
+        'Курск', 'Ставрополь', 'Улан-Удэ', 'Сочи', 'Тверь',
+        'Магнитогорск', 'Иваново', 'Брянск', 'Белгород', 'Сургут',
+        'Владимир', 'Чита', 'Архангельск', 'Смоленск', 'Саранск',
+        'Волжский', 'Якутск', 'Орёл', 'Мурманск', 'Подольск',
+        'Тамбов', 'Грозный', 'Стерлитамак', 'Петрозаводск', 'Нижневартовск',
+        'Кострома', 'Новороссийск', 'Химки', 'Йошкар-Ола', 'Мытищи',
+        'Сыктывкар', 'Южно-Сахалинск', 'Комсомольск-на-Амуре', 'Нальчик', 'Элиста'
+    ];
+
+    // ===== ФУНКЦИИ НОРМАЛИЗАЦИИ ГОРОДА =====
+
+    function capitalizeFirst(str) {
+        if (!str || str.length === 0) return str;
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+
+    function cleanCityString(str) {
+        if (!str) return '';
+        return str.trim().replace(/\s+/g, ' ');
+    }
+
+    function findClosestCity(input) {
+        if (!input || input.length < 2) return null;
+
+        const cleaned = cleanCityString(input);
+        const normalized = capitalizeFirst(cleaned);
+
+        const exactMatch = CITIES_RU.find(city =>
+            city.toLowerCase() === normalized.toLowerCase()
+        );
+        if (exactMatch) return exactMatch;
+
+        const startsWith = CITIES_RU.find(city =>
+            city.toLowerCase().startsWith(normalized.toLowerCase()) &&
+            city.length > normalized.length
+        );
+        if (startsWith) return startsWith;
+
+        const contains = CITIES_RU.find(city =>
+            city.toLowerCase().includes(normalized.toLowerCase()) &&
+            city.length > 3
+        );
+        if (contains) return contains;
+
+        let bestMatch = null;
+        let bestDistance = Infinity;
+        const threshold = 3;
+
+        for (const city of CITIES_RU) {
+            const distance = levenshteinDistance(
+                normalized.toLowerCase(),
+                city.toLowerCase()
+            );
+
+            if (distance < bestDistance && distance <= threshold) {
+                bestDistance = distance;
+                bestMatch = city;
+            }
+        }
+
+        return bestMatch;
+    }
+
+    function levenshteinDistance(a, b) {
+        const matrix = [];
+        for (let i = 0; i <= b.length; i++) {
+            matrix[i] = [i];
+        }
+        for (let j = 0; j <= a.length; j++) {
+            matrix[0][j] = j;
+        }
+        for (let i = 1; i <= b.length; i++) {
+            for (let j = 1; j <= a.length; j++) {
+                if (b[i-1] === a[j-1]) {
+                    matrix[i][j] = matrix[i-1][j-1];
+                } else {
+                    matrix[i][j] = Math.min(
+                        matrix[i-1][j-1] + 1,
+                        matrix[i][j-1] + 1,
+                        matrix[i-1][j] + 1
+                    );
+                }
+            }
+        }
+        return matrix[b.length][a.length];
+    }
+
+    function normalizeCity(input) {
+        if (!input) return null;
+
+        const cleaned = cleanCityString(input);
+        if (cleaned.length < 2) return null;
+
+        const formatted = capitalizeFirst(cleaned);
+        const found = findClosestCity(cleaned);
+
+        return {
+            original: input,
+            formatted: formatted,
+            normalized: found || formatted,
+            found: !!found
+        };
+    }
+
+    // Тексты для шагов
+    const steps = {
+        1: { title: 'Где вы находитесь?', sub: 'Это поможет подобрать ближайшие заказы' },
+        2: { title: 'Сколько вам лет?', sub: 'Нам нужны курьеры от 18 лет' },
+        3: { title: 'Какой транспорт предпочитаете?', sub: 'Выберите подходящий вариант' }
+    };
+
+    // ===== ФУНКЦИЯ ОБНОВЛЕНИЯ ШАГА С ЖИРНЫМ СТИЛЕМ =====
+    function updateStep() {
+        questions.forEach(q => q.classList.remove('active'));
+        const target = document.querySelector(`.quiz-question[data-question="${currentQuestion}"]`);
+        if (target) target.classList.add('active');
+
+        const stepData = steps[currentQuestion];
+        if (stepData) {
+            titleEl.textContent = stepData.title;
+            subEl.textContent = stepData.sub;
+        }
+
+        // Жирный шаг
+        stepEl.innerHTML = `<strong style="font-weight: 900; font-size: inherit;">${currentQuestion}/3</strong>`;
+
+        if (ageError) ageError.style.display = 'none';
+
+        nextBtn.disabled = true;
+        nextBtn.classList.remove('active');
+
+        if (currentQuestion === 3) {
+            nextBtn.textContent = 'Продолжить';
+        } else {
+            nextBtn.textContent = 'Продолжить';
+        }
+
+        if (resultBlock) resultBlock.classList.remove('show');
+        resultBlock.style.display = 'none';
+
+        if (currentQuestion === 1) {
+            if (answers.city === 'Другой') {
+                showCityInput();
+            } else {
+                removeCityInput();
+            }
+        } else {
+            removeCityInput();
+        }
+    }
+
+    function createCityInput() {
+        if (cityInput) {
+            cityInput.remove();
+            cityInput = null;
+        }
+
+        const wrapper = document.createElement('div');
+        wrapper.style.cssText = `
+            width: 100%;
+            margin-top: 10px;
+            padding: 0 4px;
+        `;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = 'Введите ваш город...';
+        input.autocomplete = 'off';
+        input.style.cssText = `
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--black);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            background: var(--white);
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 2px 2px 0 rgba(7, 18, 13, 0.1);
+        `;
+
+        input.addEventListener('focus', function() {
+            this.style.borderColor = '#b8ff2c';
+            this.style.boxShadow = '4px 4px 0 rgba(7, 18, 13, 0.2), 0 0 0 3px rgba(184, 255, 44, 0.3)';
+        });
+
+        input.addEventListener('blur', function() {
+            this.style.borderColor = 'var(--black)';
+            this.style.boxShadow = '2px 2px 0 rgba(7, 18, 13, 0.1)';
+        });
+
+        input.addEventListener('input', function() {
+            const rawValue = this.value.trim();
+
+            if (rawValue.length > 0) {
+                answers.city = 'Другой';
+                answers.cityCustom = rawValue;
+
+                const normalized = normalizeCity(rawValue);
+                if (normalized) {
+                    answers.cityNormalized = normalized;
+                } else {
+                    answers.cityNormalized = null;
+                }
+            } else {
+                answers.city = null;
+                answers.cityCustom = null;
+                answers.cityNormalized = null;
+            }
+            checkCanProceed();
+        });
+
+        wrapper.appendChild(input);
+        cityInput = wrapper;
+        return wrapper;
+    }
+
+    function showCityInput() {
+        const firstQuestion = document.querySelector('.quiz-question[data-question="1"]');
+        if (!firstQuestion) return;
+
+        let existingWrapper = firstQuestion.querySelector('.city-input-wrapper');
+        if (existingWrapper) {
+            existingWrapper.style.display = 'block';
+            const input = existingWrapper.querySelector('input');
+            if (input) {
+                input.value = answers.cityCustom || '';
+                if (input.value.trim().length > 0) {
+                    checkCanProceed();
+                }
+            }
+            return;
+        }
+
+        const wrapper = createCityInput();
+        wrapper.classList.add('city-input-wrapper');
+        firstQuestion.appendChild(wrapper);
+
+        setTimeout(() => {
+            const input = wrapper.querySelector('input');
+            if (input) input.focus();
+        }, 100);
+    }
+
+    function removeCityInput() {
+        const firstQuestion = document.querySelector('.quiz-question[data-question="1"]');
+        if (!firstQuestion) return;
+
+        const existing = firstQuestion.querySelector('.city-input-wrapper');
+        if (existing) {
+            existing.remove();
+        }
+        cityInput = null;
+    }
+
+    function checkCanProceed() {
+        let can = false;
+
+        if (currentQuestion === 1) {
+            if (answers.city === 'Другой') {
+                can = answers.cityCustom && answers.cityCustom.trim().length > 0;
+            } else {
+                can = !!answers.city;
+            }
+        }
+
+        if (currentQuestion === 2 && answers.age) {
+            const ageValue = answers.age;
+            if (['18-25', '26-35', '36-45', '46+'].includes(ageValue)) {
+                can = true;
+                if (ageError) ageError.style.display = 'none';
+            } else {
+                can = false;
+                if (ageError) ageError.style.display = 'block';
+            }
+        }
+
+        if (currentQuestion === 3 && answers.delivery) {
+            can = true;
+        }
+
+        if (can) {
+            nextBtn.disabled = false;
+            nextBtn.classList.add('active');
+        } else {
+            nextBtn.disabled = true;
+            nextBtn.classList.remove('active');
+        }
+        return can;
+    }
+
+    function handleOptionClick(e) {
+        const option = e.currentTarget;
+        const parent = option.closest('.quiz-question');
+        if (!parent) return;
+
+        const questionNum = parseInt(parent.dataset.question, 10);
+        const value = option.dataset.value;
+
+        parent.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+
+        if (questionNum === 1) {
+            if (value === 'Другой') {
+                answers.city = 'Другой';
+                answers.cityCustom = null;
+                answers.cityNormalized = null;
+                showCityInput();
+                nextBtn.disabled = true;
+                nextBtn.classList.remove('active');
+            } else {
+                answers.city = value;
+                answers.cityCustom = null;
+                answers.cityNormalized = {
+                    original: value,
+                    formatted: value,
+                    normalized: value,
+                    found: true
+                };
+                removeCityInput();
+                checkCanProceed();
+            }
+        } else if (questionNum === 2) {
+            answers.age = value;
+            checkCanProceed();
+
+            if (value === 'до 18') {
+                nextBtn.disabled = true;
+                nextBtn.classList.remove('active');
+                if (ageError) ageError.style.display = 'block';
+            } else {
+                if (ageError) ageError.style.display = 'none';
+            }
+        } else if (questionNum === 3) {
+            answers.delivery = value;
+            checkCanProceed();
+        }
+    }
+
+    document.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', handleOptionClick);
+    });
+
+    nextBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (this.disabled) return;
+
+        if (currentQuestion === 3) {
+            showResult();
+            return;
+        }
+
+        if (currentQuestion < 3) {
+            if (currentQuestion === 2) {
+                const age = answers.age;
+                if (!age || age === 'до 18') {
+                    if (ageError) ageError.style.display = 'block';
+                    this.disabled = true;
+                    this.classList.remove('active');
+                    return;
+                }
+            }
+
+            currentQuestion++;
+            updateStep();
+            checkCanProceed();
+        }
+    });
+
+    function showResult() {
+        questions.forEach(q => q.classList.remove('active'));
+
+        if (resultBlock) {
+            resultBlock.style.display = 'flex';
+            setTimeout(() => resultBlock.classList.add('show'), 20);
+        }
+
+        if (queueNumber) {
+            const queue = Math.floor(Math.random() * 3) + 1;
+            queueNumber.textContent = queue;
+        }
+
+        let cityDisplay = '';
+        if (answers.city === 'Другой' && answers.cityNormalized) {
+            cityDisplay = answers.cityNormalized.normalized;
+        } else if (answers.city && answers.city !== 'Другой') {
+            cityDisplay = answers.city;
+        }
+
+        titleEl.textContent = '🎉 Вы почти курьер!';
+        subEl.textContent = `Город: ${cityDisplay || 'Не указан'}`;
+
+        // На финальном шаге — галочка
+        stepEl.innerHTML = `<strong style="font-weight: 900; font-size: inherit;">✅</strong>`;
+
+        nextBtn.style.display = 'none';
+
+        const finalCta = document.getElementById('quizFinalCta');
+        if (finalCta) {
+            finalCta.href = REFERRAL_URL;
+            finalCta.classList.add('js-referral-link');
+
+            // ===== ОТСЛЕЖИВАНИЕ ДЛЯ ЯНДЕКС ДИРЕКТ =====
+            // Удаляем старые обработчики, чтобы не было дублей
+            const newCta = finalCta.cloneNode(true);
+            finalCta.parentNode.replaceChild(newCta, finalCta);
+
+            newCta.addEventListener('click', function(e) {
+                if (typeof ym !== 'undefined') {
+                    try {
+                        // Основная цель для Яндекс Директ
+                        ym(METRIKA_ID, 'reachGoal', 'quiz_submit');
+
+                        // Дополнительные параметры для аналитики
+                        ym(METRIKA_ID, 'reachGoal', 'quiz_complete', {
+                            city: cityDisplay || answers.city || '',
+                            age: answers.age || '',
+                            delivery: answers.delivery || ''
+                        });
+
+                        console.log('[Metrika] ✅ Цель quiz_submit отправлена');
+                    } catch(e) {
+                        console.warn('[Metrika] ❌ Ошибка:', e);
+                    }
+                }
+            });
+        }
+
+        // Отправляем событие завершения квиза (для статистики)
+        if (typeof ym !== 'undefined') {
+            try {
+                ym(METRIKA_ID, 'reachGoal', 'quiz_complete', {
+                    city: cityDisplay || answers.city || '',
+                    age: answers.age || '',
+                    delivery: answers.delivery || ''
+                });
+            } catch(e) {}
+        }
+    }
+
+    function resetQuiz() {
+        currentQuestion = 1;
+        answers.city = null;
+        answers.cityCustom = null;
+        answers.cityNormalized = null;
+        answers.age = null;
+        answers.delivery = null;
+        nextBtn.style.display = '';
+        resultBlock.style.display = 'none';
+        resultBlock.classList.remove('show');
+        document.querySelectorAll('.quiz-option').forEach(opt => opt.classList.remove('selected'));
+        removeCityInput();
+        updateStep();
+        checkCanProceed();
+    }
+
+    const observer = new MutationObserver(function() {
+        if (quizModalOverlay.classList.contains('active')) {
+            resetQuiz();
+        }
+    });
+    observer.observe(quizModalOverlay, { attributes: true, attributeFilter: ['class'] });
+
+    // Инициализация
+    updateStep();
+})();

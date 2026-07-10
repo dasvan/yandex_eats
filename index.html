@@ -24,9 +24,6 @@
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/110509647" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- /Yandex.Metrika counter -->
-
-
-
 </head>
 <body>
 <main class="landing">
@@ -125,6 +122,86 @@
         <a class="cta js-referral-link" href="https://example.com/referral" rel="noreferrer">Заполнить анкету</a>
     </section>
 </main>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО С КВИЗОМ ===== -->
+<div class="quiz-modal-overlay" id="quizModalOverlay">
+    <div class="quiz-modal">
+        <button class="quiz-modal-close" id="quizModalClose" aria-label="Закрыть квиз">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+        </button>
+
+        <div class="quiz-container" id="quizContainer">
+            <div class="quiz-header">
+                <span class="quiz-step" id="quizStep">1/3</span>
+                <h3 class="quiz-title" id="quizTitle">Где вы находитесь?</h3>
+                <p class="quiz-sub" id="quizSub">Это поможет подобрать ближайшие заказы</p>
+            </div>
+
+            <div class="quiz-body" id="quizBody">
+                <!-- Вопрос 1: Город -->
+                <div class="quiz-question active" data-question="1">
+                    <div class="quiz-options" id="cityOptions">
+                        <button class="quiz-option" data-value="Москва">Москва</button>
+                        <button class="quiz-option" data-value="Санкт-Петербург">Санкт-Петербург</button>
+                        <button class="quiz-option" data-value="Нижний Новгород">Нижний Новгород</button>
+                        <button class="quiz-option" data-value="Екатеринбург">Екатеринбург</button>
+                        <button class="quiz-option" data-value="Новосибирск">Новосибирск</button>
+                        <button class="quiz-option" data-value="Другой">Другой</button>
+                    </div>
+                </div>
+
+                <!-- Вопрос 2: Возраст -->
+                <div class="quiz-question" data-question="2">
+                    <div class="quiz-options" id="ageOptions">
+                        <button class="quiz-option" data-value="18-25">18-25 лет</button>
+                        <button class="quiz-option" data-value="26-35">26-35 лет</button>
+                        <button class="quiz-option" data-value="36-45">36-45 лет</button>
+                        <button class="quiz-option" data-value="46+">46+ лет</button>
+                    </div>
+                    <div class="quiz-error" id="ageError" style="display: none; color: #d32f2f; font-size: 14px; margin-top: 12px; text-align: center; font-weight: 600;">
+                        ⚠️ Нам нужны курьеры от 18 лет. Попробуйте позже!
+                    </div>
+                </div>
+
+                <!-- Вопрос 3: Тип доставки -->
+                <div class="quiz-question" data-question="3">
+                    <div class="quiz-options" id="deliveryOptions">
+                        <button class="quiz-option" data-value="Пеший">🚶 Пеший</button>
+                        <button class="quiz-option" data-value="Велосипед">🚲 Велосипед</button>
+                        <button class="quiz-option" data-value="Электросамокат">🛴 Электросамокат</button>
+                        <button class="quiz-option" data-value="Авто">🚗 Авто</button>
+                    </div>
+                </div>
+
+                <!-- Блок результата (скрыт) -->
+                <div class="quiz-result" id="quizResult" style="display: none;">
+                    <div class="result-badge">
+                        <span class="result-icon">✅</span>
+                        <span class="result-title">Вакансия найдена!</span>
+                        <span class="result-sub">Для вас есть подходящие заказы</span>
+                    </div>
+                    <div class="result-queue">
+                        <span>Людей в очереди за Вами:</span>
+                        <strong id="queueNumber">2</strong>
+                    </div>
+                    <div class="result-cta">
+                        <p class="result-text">Заполните анкету – это займёт <strong>1.5 минуты</strong></p>
+                        <a href="#" class="cta quiz-cta js-referral-link" id="quizFinalCta">
+                            Заполнить анкету
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Кнопка "Продолжить" -->
+            <div class="quiz-footer">
+                <button class="quiz-next" id="quizNextBtn" disabled>Продолжить</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="app.js"></script>
 </body>
