@@ -685,7 +685,7 @@ setTimeout(function() {
     if (!quizModalTriggered) {
         openQuizModal();
     }
-}, 6000);
+}, 12000);
 
 // ===== 2. ПОКАЗ ПРИ ДОЛИСТЫВАНИИ ДО НИЗА =====
 let scrollTriggered = false;
